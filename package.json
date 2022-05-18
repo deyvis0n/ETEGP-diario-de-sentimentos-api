@@ -1,0 +1,12 @@
+{
+  "name": "diario-de-sentimentos-api",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "deyvis0n",
+  "license": "ISC"
+}

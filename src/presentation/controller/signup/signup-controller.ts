@@ -6,5 +6,9 @@ export class SignUpController {
         return { statusCode: 400 }
       }
     }
+    const { password, passwordConfirmation } = httpRquest.body
+    if (password !== passwordConfirmation) {
+      return { statusCode: 400 }
+    }
   }
 }

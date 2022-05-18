@@ -1,14 +1,17 @@
-export class SignUpController {
-  handle (httpRquest: any): any {
+import { HttpRequest, HttpResponse } from '../protocols/http'
+import { Controller } from '../protocols/signup'
+
+export class SignUpController implements Controller {
+  handle (httpRequest: HttpRequest): HttpResponse {
     const requiredFields = ['name', 'email', 'password', 'passwordConfirmation']
     for (const field of requiredFields) {
-      if (!httpRquest.body[field]) {
-        return { statusCode: 400 }
+      if (!httpRequest.body[field]) {
+        return { statusCode: 400, body: '' }
       }
     }
-    const { password, passwordConfirmation } = httpRquest.body
+    const { password, passwordConfirmation } = httpRequest.body
     if (password !== passwordConfirmation) {
-      return { statusCode: 400 }
+      return { statusCode: 400, body: '' }
     }
   }
 }

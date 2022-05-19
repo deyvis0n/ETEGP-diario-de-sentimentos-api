@@ -1,6 +1,6 @@
 import { SignUpController } from './signup-controller'
 import { MissingParamError } from '../../erros/missing-param-error'
-import { badRequest } from '../../helper/http/http-helper'
+import { badRequest, serverError } from '../../helper/http/http-helper'
 import { InvalidParamError } from '../../erros/invalid-param-error'
 import { EmailValidator } from '../../../validation/protocols/email-validator'
 import { HttpRequest } from '../../protocols/http'
@@ -116,5 +116,14 @@ describe('SignUpController', () => {
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
     const httpResponse = sut.handle(makeFakeHttpRequest())
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')))
+  })
+
+  test('Should return 500 if EmailValidator throws', () => {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = sut.handle(makeFakeHttpRequest())
+    expect(httpResponse).toEqual(serverError())
   })
 })

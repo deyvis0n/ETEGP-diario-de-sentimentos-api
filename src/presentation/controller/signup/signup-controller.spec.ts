@@ -1,6 +1,6 @@
 import { SignUpController } from './signup-controller'
 import { MissingParamError } from '../../erros/missing-param-error'
-import { badRequest, serverError } from '../../helper/http/http-helper'
+import { badRequest, serverError, ok } from '../../helper/http/http-helper'
 import { InvalidParamError } from '../../erros/invalid-param-error'
 import { EmailValidator } from '../../../validation/protocols/email-validator'
 import { HttpRequest } from '../../protocols/http'
@@ -166,5 +166,11 @@ describe('SignUpController', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError())
+  })
+
+  test('Should returns 200 if valid data is provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 })

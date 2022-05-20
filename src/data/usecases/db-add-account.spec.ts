@@ -1,5 +1,7 @@
+import { AccountModel } from '../../domain/model/account'
 import { AddAccountModel } from '../../domain/usercase/add-account'
 import { Hasher } from '../protocols/criptography/hasher'
+import { AddAccountRepository } from '../protocols/db/add-account-repository'
 import { DbAddAccount } from './db-add-account'
 
 const makeHasher = (): Hasher => {
@@ -17,17 +19,36 @@ const makeFakeAddAccount = (): AddAccountModel => ({
   password: 'valid_password'
 })
 
+const makeFakeAccount = (): AccountModel => ({
+  id: 'valid_id',
+  name: 'valid_name',
+  email: 'valid_email@mail.com',
+  password: 'hashed_password'
+})
+
+const makeAddAccountRepository = (): AddAccountRepository => {
+  class AddAccountRepositoryStub implements AddAccountRepository {
+    async add (accountData: AddAccountModel): Promise<AccountModel> {
+      return makeFakeAccount()
+    }
+  }
+  return new AddAccountRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbAddAccount
   hasherStub: Hasher
+  addAccountRepositoryStub: AddAccountRepository
 }
 
 const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
-  const sut = new DbAddAccount(hasherStub)
+  const addAccountRepositoryStub = makeAddAccountRepository()
+  const sut = new DbAddAccount(hasherStub, addAccountRepositoryStub)
   return {
     hasherStub,
-    sut
+    sut,
+    addAccountRepositoryStub
   }
 }
 
@@ -44,5 +65,16 @@ describe('DbAddAccount', () => {
     jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const promise = sut.add(makeFakeAddAccount())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call AddAccountRepository with correct values', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    const addAccountRepSpy = jest.spyOn(addAccountRepositoryStub, 'add')
+    await sut.add(makeFakeAddAccount())
+    expect(addAccountRepSpy).toBeCalledWith({
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'hashed_password'
+    })
   })
 })

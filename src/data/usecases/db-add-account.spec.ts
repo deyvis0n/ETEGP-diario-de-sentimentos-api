@@ -13,7 +13,7 @@ const makeHasher = (): Hasher => {
   return new HasherStub()
 }
 
-const makeFakeAddAccount = (): AddAccountModel => ({
+const makeFakeAccountData = (): AddAccountModel => ({
   name: 'valid_name',
   email: 'valid_email@mail.com',
   password: 'valid_password'
@@ -56,21 +56,21 @@ describe('DbAddAccount', () => {
   test('Should call Hasher with correct value', async () => {
     const { sut, hasherStub } = makeSut()
     const hasherSpy = jest.spyOn(hasherStub, 'hash')
-    await sut.add(makeFakeAddAccount())
+    await sut.add(makeFakeAccountData())
     expect(hasherSpy).toBeCalledWith('valid_password')
   })
 
   test('Should return throws if Hasher throws', async () => {
     const { sut, hasherStub } = makeSut()
     jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
-    const promise = sut.add(makeFakeAddAccount())
+    const promise = sut.add(makeFakeAccountData())
     await expect(promise).rejects.toThrow()
   })
 
   test('Should call AddAccountRepository with correct values', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addAccountRepSpy = jest.spyOn(addAccountRepositoryStub, 'add')
-    await sut.add(makeFakeAddAccount())
+    await sut.add(makeFakeAccountData())
     expect(addAccountRepSpy).toBeCalledWith({
       name: 'valid_name',
       email: 'valid_email@mail.com',

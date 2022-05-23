@@ -175,6 +175,15 @@ describe('SignUpController', () => {
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('password')))
   })
 
+  test('Should return 500 if PasswordValidator throws', async () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    jest.spyOn(passwordValidatorStub, 'isValid').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError())
+  })
+
   test('Should AddAccount calls with correct values', async () => {
     const { sut, addAccount } = makeSut()
     const addSpy = jest.spyOn(addAccount, 'add')

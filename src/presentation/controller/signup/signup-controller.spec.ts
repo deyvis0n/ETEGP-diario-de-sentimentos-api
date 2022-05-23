@@ -135,14 +135,14 @@ describe('SignUpController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('invalid_password')))
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('passwordConfirmation')))
   })
 
   test('Should EmailValidator calls with correct values', async () => {
     const { sut, emailValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
     await sut.handle(makeFakeRequest())
-    expect(isValidSpy).toBeCalledWith(makeFakeRequest().body.email)
+    expect(isValidSpy).toBeCalledWith('valid_email@mail.com')
   })
 
   test('Should returns 400 if invalid email is provided', async () => {
@@ -165,7 +165,7 @@ describe('SignUpController', () => {
     const { sut, passwordValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(passwordValidatorStub, 'isValid')
     await sut.handle(makeFakeRequest())
-    expect(isValidSpy).toBeCalledWith(makeFakeRequest().body.password)
+    expect(isValidSpy).toBeCalledWith('valid_password')
   })
 
   test('Should return 400 if invalid password is provided', async () => {

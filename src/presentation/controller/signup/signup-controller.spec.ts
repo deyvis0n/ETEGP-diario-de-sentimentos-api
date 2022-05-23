@@ -3,6 +3,7 @@ import { MissingParamError } from '../../erros/missing-param-error'
 import { badRequest, serverError, ok } from '../../helper/http/http-helper'
 import { InvalidParamError } from '../../erros/invalid-param-error'
 import { EmailValidator } from '../../../validation/protocols/email-validator'
+import { PasswordValidator } from '../../../validation/protocols/password-validator'
 import { HttpRequest } from '../../protocols/http'
 import { AddAccount, AddAccountModel } from '../../../domain/usercase/add-account'
 import { AccountModel } from '../../../domain/model/account'
@@ -14,6 +15,15 @@ const makeEmailValidator = (): EmailValidator => {
     }
   }
   return new EmailValidatorStub()
+}
+
+const makePasswordValidator = (): PasswordValidator => {
+  class PasswordValidatorStub implements PasswordValidator {
+    isValid (password: string): boolean {
+      return true
+    }
+  }
+  return new PasswordValidatorStub()
 }
 
 const makeFakeAccount = (): AccountModel => ({
@@ -44,16 +54,19 @@ const makeFakeRequest = (): HttpRequest => ({
 interface SutTypes {
   sut: SignUpController
   emailValidatorStub: EmailValidator
+  passwordValidatorStub: PasswordValidator
   addAccount: AddAccount
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
+  const passwordValidatorStub = makePasswordValidator()
   const addAccount = makeAddAccount()
-  const sut = new SignUpController(emailValidatorStub, addAccount)
+  const sut = new SignUpController(emailValidatorStub, addAccount, passwordValidatorStub)
   return {
     sut,
     emailValidatorStub,
+    passwordValidatorStub,
     addAccount
   }
 }
@@ -148,7 +161,14 @@ describe('SignUpController', () => {
     expect(httpResponse).toEqual(serverError())
   })
 
-  test('Should EmailValidator calls with correct values', async () => {
+  test('Should PasswordValidator calls with correct values', async () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    const isValidSpy = jest.spyOn(passwordValidatorStub, 'isValid')
+    await sut.handle(makeFakeRequest())
+    expect(isValidSpy).toBeCalledWith(makeFakeRequest().body.password)
+  })
+
+  test('Should AddAccount calls with correct values', async () => {
     const { sut, addAccount } = makeSut()
     const addSpy = jest.spyOn(addAccount, 'add')
     await sut.handle(makeFakeRequest())

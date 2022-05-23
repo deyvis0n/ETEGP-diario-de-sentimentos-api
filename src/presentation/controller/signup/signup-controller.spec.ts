@@ -168,6 +168,13 @@ describe('SignUpController', () => {
     expect(isValidSpy).toBeCalledWith(makeFakeRequest().body.password)
   })
 
+  test('Should return 400 if invalid password is provided', async () => {
+    const { sut, passwordValidatorStub } = makeSut()
+    jest.spyOn(passwordValidatorStub, 'isValid').mockReturnValueOnce(false)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('password')))
+  })
+
   test('Should AddAccount calls with correct values', async () => {
     const { sut, addAccount } = makeSut()
     const addSpy = jest.spyOn(addAccount, 'add')

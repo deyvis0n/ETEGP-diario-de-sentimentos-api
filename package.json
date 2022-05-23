@@ -16,6 +16,7 @@
   "author": "deyvis0n",
   "license": "ISC",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^2.2.2",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.5.1",
     "@types/node": "^17.0.34",

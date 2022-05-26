@@ -2,6 +2,7 @@ import { MissingParamError } from '../../erros/missing-param-error'
 import { LoginController } from './login-controller'
 import { Authentication, AuthenticationModel } from '../../../domain/usercase/authentication'
 import { badRequest } from '../../helper/http/http-helper'
+import { HttpRequest } from '../../protocols/http'
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
@@ -11,6 +12,13 @@ const makeAuthentication = (): Authentication => {
   }
   return new AuthenticationStub()
 }
+
+const makeFakeRequest = (): HttpRequest => ({
+  body: {
+    email: 'any_email@mail.com',
+    password: 'any_password'
+  }
+})
 
 interface SutTypes {
   sut: LoginController
@@ -52,13 +60,7 @@ describe('LoginController', () => {
   test('Should call Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
     const authSpy = jest.spyOn(authenticationStub, 'auth')
-    const httpRequest = {
-      body: {
-        email: 'any_email@mail.com',
-        password: 'any_password'
-      }
-    }
-    await sut.handle(httpRequest)
+    await sut.handle(makeFakeRequest())
     expect(authSpy).toBeCalledWith({
       email: 'any_email@mail.com',
       password: 'any_password'

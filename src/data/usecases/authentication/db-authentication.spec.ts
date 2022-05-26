@@ -4,6 +4,7 @@ import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by
 import { HasherCompare } from '../../protocols/criptography/hasher-compare'
 import { AuthenticationModel } from '../../../domain/usercase/authentication'
 import { Encrypter } from '../../protocols/criptography/encrypter'
+import { UpdateAccountAccessToken } from '../../../data/protocols/db/update-account-access-token'
 
 const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
@@ -21,6 +22,13 @@ const makeHasherCompare = (): HasherCompare => {
     }
   }
   return new HasherCompareStub()
+}
+
+const makeUpdateAccountAccessToken = (): UpdateAccountAccessToken => {
+  class UpdateAccountAccessTokenStub implements UpdateAccountAccessToken {
+    async update (value: string, token: string): Promise<void> {}
+  }
+  return new UpdateAccountAccessTokenStub()
 }
 
 const makeEncrypt = (): Encrypter => {
@@ -49,18 +57,26 @@ interface SutTypes {
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
   hashCompareStub: HasherCompare
   encrypterStub: Encrypter
+  updateAccountAccessTokenStub: UpdateAccountAccessToken
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
   const hashCompareStub = makeHasherCompare()
   const encrypterStub = makeEncrypt()
-  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashCompareStub, encrypterStub)
+  const updateAccountAccessTokenStub = makeUpdateAccountAccessToken()
+  const sut = new DbAuthentication(
+    loadAccountByEmailRepositoryStub,
+    hashCompareStub,
+    encrypterStub,
+    updateAccountAccessTokenStub
+  )
   return {
     sut,
     loadAccountByEmailRepositoryStub,
     hashCompareStub,
-    encrypterStub
+    encrypterStub,
+    updateAccountAccessTokenStub
   }
 }
 
@@ -119,5 +135,12 @@ describe('DbAuthentication', () => {
     jest.spyOn(encrypterStub, 'generate').mockImplementationOnce(() => { throw new Error() })
     const promise = sut.auth(makeFakeAuthModel())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call UpdateAccountAccessToken with correct values', async () => {
+    const { sut, updateAccountAccessTokenStub } = makeSut()
+    const loadByEmailSpy = jest.spyOn(updateAccountAccessTokenStub, 'update')
+    await sut.auth(makeFakeAuthModel())
+    expect(loadByEmailSpy).toBeCalledWith('any_id', 'any_access_token')
   })
 })

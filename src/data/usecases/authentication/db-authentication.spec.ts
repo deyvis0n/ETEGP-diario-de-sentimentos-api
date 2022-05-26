@@ -85,4 +85,14 @@ describe('DbAuthentication', () => {
     })
     expect(loadByEmailSpy).toBeCalledWith('any_password', 'hashed_password')
   })
+
+  test('Should return null if HasherCompare return false', async () => {
+    const { sut, hashCompareStub } = makeSut()
+    jest.spyOn(hashCompareStub, 'compare').mockReturnValueOnce(new Promise(resolve => resolve(false)))
+    const promise = await sut.auth({
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    })
+    expect(promise).toBeNull()
+  })
 })

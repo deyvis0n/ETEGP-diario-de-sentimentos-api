@@ -2,6 +2,7 @@ import { AccountModel } from '../../../domain/model/account'
 import { DbAuthentication } from './db-authentication'
 import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 import { HasherCompare } from '../../protocols/criptography/hasher-compare'
+import { AuthenticationModel } from '../../../domain/usercase/authentication'
 
 const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
@@ -20,6 +21,11 @@ const makeHasherCompare = (): HasherCompare => {
   }
   return new HasherCompareStub()
 }
+
+const makeFakeAuthModel = (): AuthenticationModel => ({
+  email: 'any_email@mail.com',
+  password: 'any_password'
+})
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
@@ -49,50 +55,35 @@ describe('DbAuthentication', () => {
   test('Should call LoadAccountByEmailRepository with correct value', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     const loadByEmailSpy = jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail')
-    await sut.auth({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    await sut.auth(makeFakeAuthModel())
     expect(loadByEmailSpy).toBeCalledWith('any_email@mail.com')
   })
 
   test('Should return null if LoadAccountByEmailRepository return null', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve(null)))
-    const promise = await sut.auth({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    const promise = await sut.auth(makeFakeAuthModel())
     expect(promise).toBeNull()
   })
 
   test('Should return throws if LoadAccountByEmailRepository throws', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
     jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockImplementationOnce(() => { throw new Error() })
-    const promise = sut.auth({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    const promise = sut.auth(makeFakeAuthModel())
     await expect(promise).rejects.toThrow()
   })
 
   test('Should call HasherCompare with correct value', async () => {
     const { sut, hashCompareStub } = makeSut()
     const loadByEmailSpy = jest.spyOn(hashCompareStub, 'compare')
-    await sut.auth({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    await sut.auth(makeFakeAuthModel())
     expect(loadByEmailSpy).toBeCalledWith('any_password', 'hashed_password')
   })
 
   test('Should return null if HasherCompare return false', async () => {
     const { sut, hashCompareStub } = makeSut()
     jest.spyOn(hashCompareStub, 'compare').mockReturnValueOnce(new Promise(resolve => resolve(false)))
-    const promise = await sut.auth({
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    const promise = await sut.auth(makeFakeAuthModel())
     expect(promise).toBeNull()
   })
 })

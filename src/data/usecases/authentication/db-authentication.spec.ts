@@ -1,27 +1,47 @@
 import { AccountModel } from '../../../domain/model/account'
 import { DbAuthentication } from './db-authentication'
 import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
+import { HasherCompare } from '../../protocols/criptography/hasher-compare'
 
 const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
     async loadByEmail (email: string): Promise<AccountModel> {
-      return null
+      return makeFakeAccount()
     }
   }
   return new LoadAccountByEmailRepositoryStub()
 }
 
+const makeHasherCompare = (): HasherCompare => {
+  class HasherCompareStub implements HasherCompare {
+    async compare (value: string, hash: string): Promise<boolean> {
+      return true
+    }
+  }
+  return new HasherCompareStub()
+}
+
+const makeFakeAccount = (): AccountModel => ({
+  id: 'any_id',
+  name: 'any_name',
+  email: 'any_email@mail.com',
+  password: 'hashed_password'
+})
+
 interface SutTypes {
   sut: DbAuthentication
   loadAccountByEmailRepositoryStub: LoadAccountByEmailRepository
+  hashCompareStub: HasherCompare
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositoryStub = makeLoadAccountByEmailRepository()
-  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub)
+  const hashCompareStub = makeHasherCompare()
+  const sut = new DbAuthentication(loadAccountByEmailRepositoryStub, hashCompareStub)
   return {
     sut,
-    loadAccountByEmailRepositoryStub
+    loadAccountByEmailRepositoryStub,
+    hashCompareStub
   }
 }
 
@@ -54,5 +74,15 @@ describe('DbAuthentication', () => {
       password: 'any_password'
     })
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call HasherCompare with correct value', async () => {
+    const { sut, hashCompareStub } = makeSut()
+    const loadByEmailSpy = jest.spyOn(hashCompareStub, 'compare')
+    await sut.auth({
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    })
+    expect(loadByEmailSpy).toBeCalledWith('any_password', 'hashed_password')
   })
 })

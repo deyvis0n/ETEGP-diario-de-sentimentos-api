@@ -1,6 +1,6 @@
 import { Authentication } from '../../../domain/usercase/authentication'
 import { MissingParamError } from '../../erros/missing-param-error'
-import { badRequest } from '../../helper/http/http-helper'
+import { badRequest, unauthorized } from '../../helper/http/http-helper'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Controller } from '../../protocols/signup'
 
@@ -15,7 +15,10 @@ export class LoginController implements Controller {
       }
     }
     const { email, password } = httpRequest.body
-    await this.authentication.auth({ email, password })
+    const accessToken = await this.authentication.auth({ email, password })
+    if (!accessToken) {
+      return unauthorized()
+    }
     return null
   }
 }

@@ -1,6 +1,7 @@
+
 import { Authentication } from '../../../domain/usercase/authentication'
 import { MissingParamError } from '../../erros/missing-param-error'
-import { badRequest, serverError, unauthorized } from '../../helper/http/http-helper'
+import { badRequest, serverError, unauthorized, ok } from '../../helper/http/http-helper'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Controller } from '../../protocols/signup'
 
@@ -20,7 +21,7 @@ export class LoginController implements Controller {
       if (!accessToken) {
         return unauthorized()
       }
-      return null
+      return ok({ accessToken })
     } catch (error) {
       return serverError()
     }

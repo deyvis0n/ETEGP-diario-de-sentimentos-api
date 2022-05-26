@@ -14,7 +14,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('LoginController', () => {
-  test('Should return 400 if no name is provided', async () => {
+  test('Should return 400 if no password is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -22,14 +22,14 @@ describe('LoginController', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('name')))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
   })
 
   test('Should return 400 if no email is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        name: 'any_name'
+        password: 'any_password'
       }
     }
     const httpResponse = await sut.handle(httpRequest)

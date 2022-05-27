@@ -19,4 +19,10 @@ describe('JsonWebTokenAdapter', () => {
     await sut.generate('any_id')
     expect(signSpy).toBeCalledWith({ id: 'any_id' }, 'secret')
   })
+
+  test('Should return a token on sign success', async () => {
+    const sut = makeSut()
+    const accessToken = await sut.generate('any_id')
+    expect(accessToken).toBe('any_token')
+  })
 })

@@ -33,7 +33,7 @@ const makeUpdateAccountAccessToken = (): UpdateAccountAccessToken => {
 
 const makeEncrypt = (): Encrypter => {
   class EncrypterStub implements Encrypter {
-    async generate (value: string): Promise<string> {
+    async encrypt (value: string): Promise<string> {
       return 'any_access_token'
     }
   }
@@ -125,14 +125,14 @@ describe('DbAuthentication', () => {
 
   test('Should call Encrypt with correct value', async () => {
     const { sut, encrypterStub } = makeSut()
-    const loadByEmailSpy = jest.spyOn(encrypterStub, 'generate')
+    const loadByEmailSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(makeFakeAuthModel())
     expect(loadByEmailSpy).toBeCalledWith('any_id')
   })
 
   test('Should return throws if Encrypt throws', async () => {
     const { sut, encrypterStub } = makeSut()
-    jest.spyOn(encrypterStub, 'generate').mockImplementationOnce(() => { throw new Error() })
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
     const promise = sut.auth(makeFakeAuthModel())
     await expect(promise).rejects.toThrow()
   })

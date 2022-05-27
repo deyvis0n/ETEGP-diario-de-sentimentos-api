@@ -16,7 +16,7 @@ describe('JsonWebTokenAdapter', () => {
   test('Should call JWT with correct values', async () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
-    await sut.generate('any_id')
+    await sut.encrypt('any_id')
     expect(signSpy).toBeCalledWith({ id: 'any_id' }, 'secret')
   })
 
@@ -25,13 +25,13 @@ describe('JsonWebTokenAdapter', () => {
     jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
       throw new Error()
     })
-    const accessToken = sut.generate('any_id')
+    const accessToken = sut.encrypt('any_id')
     await expect(accessToken).rejects.toThrow()
   })
 
   test('Should return a token on sign success', async () => {
     const sut = makeSut()
-    const accessToken = await sut.generate('any_id')
+    const accessToken = await sut.encrypt('any_id')
     expect(accessToken).toBe('any_token')
   })
 })

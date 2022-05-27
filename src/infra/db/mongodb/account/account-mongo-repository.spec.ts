@@ -42,4 +42,10 @@ describe('AccountMongoRepository', () => {
     expect(account.email).toBe('any_email@mail.com')
     expect(account.password).toBe('any_password')
   })
+
+  test('Should return null if findOne return null', async () => {
+    const sut = new AccountMongoRepository()
+    const account = await sut.loadByEmail('any_email@mail.com')
+    expect(account).toBeNull()
+  })
 })

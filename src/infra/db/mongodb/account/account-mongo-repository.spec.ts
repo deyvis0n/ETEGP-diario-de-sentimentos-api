@@ -1,5 +1,8 @@
+import { Collection } from 'mongodb'
 import { MongoHelper } from '../helper/mongo-helper'
 import { AccountMongoRepository } from './account-mongo-repository'
+
+let accountCollection: Collection
 
 describe('AccountMongoRepository', () => {
   beforeAll(async () => {
@@ -7,15 +10,21 @@ describe('AccountMongoRepository', () => {
   })
 
   beforeEach(async () => {
-    await MongoHelper.getCollection('accounts').deleteMany({})
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
   })
 
   afterAll(async () => {
     await MongoHelper.disconnect()
   })
 
-  test('Should return an account on add success', async () => {
+  const makeSut = (): AccountMongoRepository => {
     const sut = new AccountMongoRepository()
+    return sut
+  }
+
+  test('Should return an account on add success', async () => {
+    const sut = makeSut()
     const account = await sut.add({
       name: 'any_name',
       email: 'any_email@mail.com',
@@ -29,7 +38,7 @@ describe('AccountMongoRepository', () => {
   })
 
   test('Should calls findOne with correct values', async () => {
-    const sut = new AccountMongoRepository()
+    const sut = makeSut()
     await sut.add({
       name: 'any_name',
       email: 'any_email@mail.com',
@@ -44,7 +53,7 @@ describe('AccountMongoRepository', () => {
   })
 
   test('Should return null if findOne return null', async () => {
-    const sut = new AccountMongoRepository()
+    const sut = makeSut()
     const account = await sut.loadByEmail('any_email@mail.com')
     expect(account).toBeNull()
   })

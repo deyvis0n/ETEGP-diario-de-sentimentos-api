@@ -39,7 +39,7 @@ describe('AccountMongoRepository', () => {
 
   test('Should calls findOne with correct values', async () => {
     const sut = makeSut()
-    await sut.add({
+    await accountCollection.insertOne({
       name: 'any_name',
       email: 'any_email@mail.com',
       password: 'any_password'

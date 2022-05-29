@@ -1,4 +1,5 @@
 import { Collection } from 'mongodb'
+import { AddAccountModel } from '../../../../domain/usercase/add-account'
 import { MongoHelper } from '../helper/mongo-helper'
 import { AccountMongoRepository } from './account-mongo-repository'
 
@@ -18,6 +19,12 @@ describe('AccountMongoRepository', () => {
     await MongoHelper.disconnect()
   })
 
+  const makeFakeAccountData = (): AddAccountModel => ({
+    name: 'any_name',
+    email: 'any_email@mail.com',
+    password: 'any_password'
+  })
+
   const makeSut = (): AccountMongoRepository => {
     const sut = new AccountMongoRepository()
     return sut
@@ -25,11 +32,7 @@ describe('AccountMongoRepository', () => {
 
   test('Should return an account on add success', async () => {
     const sut = makeSut()
-    const account = await sut.add({
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    const account = await sut.add(makeFakeAccountData())
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()
     expect(account.name).toBe('any_name')
@@ -39,11 +42,7 @@ describe('AccountMongoRepository', () => {
 
   test('Should calls findOne with correct values', async () => {
     const sut = makeSut()
-    await accountCollection.insertOne({
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    })
+    await accountCollection.insertOne(makeFakeAccountData())
     const account = await sut.loadByEmail('any_email@mail.com')
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()

@@ -7,12 +7,14 @@ import { EmailValidator } from '../../../validation/protocols/email-validator'
 import { PasswordValidator } from '../../../validation/protocols/password-validator'
 import { AddAccount } from '../../../domain/usercase/add-account'
 import { EmailInUseError } from '../../erros/email-in-use-error'
+import { Authentication } from '../../../domain/usercase/authentication'
 
 export class SignUpController implements Controller {
   constructor (
     private readonly emailValidator: EmailValidator,
     private readonly addAccount: AddAccount,
-    private readonly passwordValidator: PasswordValidator
+    private readonly passwordValidator: PasswordValidator,
+    private readonly authentication: Authentication
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -43,6 +45,10 @@ export class SignUpController implements Controller {
       if (!account) {
         return forbidden(new EmailInUseError())
       }
+      await this.authentication.auth({
+        email,
+        password
+      })
       return ok(account)
     } catch (error) {
       return serverError()

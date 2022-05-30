@@ -10,7 +10,7 @@ export const makeSignUpController = (): Controller => {
   const salt = 12
   const hash = new BcrypterAdapter(salt)
   const accountMongoRepository = new AccountMongoRepository()
-  const dbAddAccount = new DbAddAccount(hash, accountMongoRepository)
+  const dbAddAccount = new DbAddAccount(hash, accountMongoRepository, accountMongoRepository)
   const emailValidatorAdapter = new EmailValidatorAdapter()
   const passwordValidatorAdapter = new PasswordValidatorAdapter()
   const controller = new SignUpController(emailValidatorAdapter, dbAddAccount, passwordValidatorAdapter)

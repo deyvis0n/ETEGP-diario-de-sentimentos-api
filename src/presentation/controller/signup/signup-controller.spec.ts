@@ -8,7 +8,7 @@ import { PasswordValidator } from '../../../validation/protocols/password-valida
 import { HttpRequest } from '../../protocols/http'
 import { AddAccount, AddAccountModel } from '../../../domain/usercase/add-account'
 import { AccountModel } from '../../../domain/model/account'
-import { Authentication, AuthenticationModel } from '../../../domain/usercase/authentication'
+import { Authentication, AuthenticationModel, Result } from '../../../domain/usercase/authentication'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -30,8 +30,8 @@ const makePasswordValidator = (): PasswordValidator => {
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth (authentication: AuthenticationModel): Promise<string> {
-      return 'any_token'
+    async auth (authentication: AuthenticationModel): Promise<Result> {
+      return { name: 'any_name', accessToken: 'any_token' }
     }
   }
   return new AuthenticationStub()

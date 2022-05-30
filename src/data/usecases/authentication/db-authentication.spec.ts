@@ -154,6 +154,6 @@ describe('DbAuthentication', () => {
   test('Should DbAuthentication return accessToken on success', async () => {
     const { sut } = makeSut()
     const promise = await sut.auth(makeFakeAuthModel())
-    expect(promise).toBe('any_access_token')
+    expect(promise).toEqual({ name: 'any_name', accessToken: 'any_access_token' })
   })
 })

@@ -1,13 +1,13 @@
 import { MissingParamError } from '../../erros/missing-param-error'
 import { LoginController } from './login-controller'
-import { Authentication, AuthenticationModel } from '../../../domain/usercase/authentication'
+import { Authentication, AuthenticationModel, Result } from '../../../domain/usercase/authentication'
 import { badRequest, serverError, unauthorized, ok } from '../../helper/http/http-helper'
 import { HttpRequest } from '../../protocols/http'
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth (authentication: AuthenticationModel): Promise<string> {
-      return 'any_token'
+    async auth (authentication: AuthenticationModel): Promise<Result> {
+      return { name: 'any_name', accessToken: 'any_token' }
     }
   }
   return new AuthenticationStub()
@@ -84,6 +84,6 @@ describe('LoginController', () => {
   test('Should return 200 if valid credentials are provided', async () => {
     const { sut } = makeSut()
     const httpReponse = await sut.handle(makeFakeRequest())
-    expect(httpReponse).toEqual(ok({ accessToken: 'any_token' }))
+    expect(httpReponse).toEqual(ok({ name: 'any_name', accessToken: 'any_token' }))
   })
 })

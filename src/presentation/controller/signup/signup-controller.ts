@@ -1,11 +1,12 @@
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Controller } from '../../protocols/signup'
 import { MissingParamError } from '../../erros/missing-param-error'
-import { badRequest, serverError, ok } from '../../helper/http/http-helper'
+import { badRequest, serverError, ok, forbidden } from '../../helper/http/http-helper'
 import { InvalidParamError } from '../../erros/invalid-param-error'
 import { EmailValidator } from '../../../validation/protocols/email-validator'
 import { PasswordValidator } from '../../../validation/protocols/password-validator'
 import { AddAccount } from '../../../domain/usercase/add-account'
+import { EmailInUseError } from '../../erros/email-in-use-error'
 
 export class SignUpController implements Controller {
   constructor (
@@ -39,6 +40,9 @@ export class SignUpController implements Controller {
         email,
         password
       })
+      if (!account) {
+        return forbidden(new EmailInUseError())
+      }
       return ok(account)
     } catch (error) {
       return serverError()

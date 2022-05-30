@@ -12,7 +12,7 @@
 8. ✅ Cria uma conta para o usuário com os dados informados, substituido a senha fornecida pela senha criptografada
 9. ✅ Gere um token de acesso a partir do ID do usuário
 10. ✅ Atualiza os dados do usuario com o token de acesso gerado
-11. 🔲 Retorna 200 com o token de acesso e o nome do usuário
+11. ✅ Retorna 200 com o token de acesso e o nome do usuário
 
 ## Falha
 

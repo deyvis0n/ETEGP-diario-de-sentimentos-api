@@ -26,7 +26,7 @@ const makeHasherCompare = (): HasherCompare => {
 
 const makeUpdateAccountAccessToken = (): UpdateAccountAccessToken => {
   class UpdateAccountAccessTokenStub implements UpdateAccountAccessToken {
-    async update (value: string, token: string): Promise<void> {}
+    async updateAccessToken (value: string, token: string): Promise<void> {}
   }
   return new UpdateAccountAccessTokenStub()
 }
@@ -139,14 +139,14 @@ describe('DbAuthentication', () => {
 
   test('Should call UpdateAccountAccessToken with correct values', async () => {
     const { sut, updateAccountAccessTokenStub } = makeSut()
-    const loadByEmailSpy = jest.spyOn(updateAccountAccessTokenStub, 'update')
+    const loadByEmailSpy = jest.spyOn(updateAccountAccessTokenStub, 'updateAccessToken')
     await sut.auth(makeFakeAuthModel())
     expect(loadByEmailSpy).toBeCalledWith('any_id', 'any_access_token')
   })
 
   test('Should return throws if UpdateAccountAccessToken throws', async () => {
     const { sut, updateAccountAccessTokenStub } = makeSut()
-    jest.spyOn(updateAccountAccessTokenStub, 'update').mockImplementationOnce(() => { throw new Error() })
+    jest.spyOn(updateAccountAccessTokenStub, 'updateAccessToken').mockImplementationOnce(() => { throw new Error() })
     const promise = sut.auth(makeFakeAuthModel())
     await expect(promise).rejects.toThrow()
   })

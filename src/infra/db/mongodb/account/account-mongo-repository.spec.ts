@@ -57,7 +57,7 @@ describe('AccountMongoRepository', () => {
     expect(account).toBeNull()
   })
 
-  test('Should update the account accessToken on update success', async () => {
+  test('Should update the account accessToken on updateAccessToken success', async () => {
     const sut = makeSut()
     const res = await accountCollection.insertOne({
       name: 'any_name',
@@ -66,7 +66,7 @@ describe('AccountMongoRepository', () => {
     })
     const fakeAccount = await accountCollection.findOne({ _id: res.insertedId })
     expect(fakeAccount.accessToken).toBeFalsy()
-    await sut.update(fakeAccount._id.toHexString(), 'any_token')
+    await sut.updateAccessToken(fakeAccount._id.toHexString(), 'any_token')
     const account = await accountCollection.findOne({ _id: fakeAccount._id })
     expect(account.accessToken).toBe('any_token')
   })

@@ -5,6 +5,7 @@ import { EmailValidatorAdapter } from '../../../../infra/validators/email-valida
 import { PasswordValidatorAdapter } from '../../../../infra/validators/password-validator-adapter'
 import { BcrypterAdapter } from '../../../../infra/criptography/bcrypt-adapter/bcrypt-adapter'
 import { AccountMongoRepository } from '../../../../infra/db/mongodb/account/account-mongo-repository'
+import { makeDbAuthentication } from '../../usecases/authentication-factory'
 
 export const makeSignUpController = (): Controller => {
   const salt = 12
@@ -13,6 +14,7 @@ export const makeSignUpController = (): Controller => {
   const dbAddAccount = new DbAddAccount(hash, accountMongoRepository, accountMongoRepository)
   const emailValidatorAdapter = new EmailValidatorAdapter()
   const passwordValidatorAdapter = new PasswordValidatorAdapter()
-  const controller = new SignUpController(emailValidatorAdapter, dbAddAccount, passwordValidatorAdapter)
+  const dbAuthentication = makeDbAuthentication()
+  const controller = new SignUpController(emailValidatorAdapter, dbAddAccount, passwordValidatorAdapter, dbAuthentication)
   return controller
 }

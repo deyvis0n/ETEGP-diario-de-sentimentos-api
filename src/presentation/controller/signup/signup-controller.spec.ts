@@ -8,6 +8,7 @@ import { PasswordValidator } from '../../../validation/protocols/password-valida
 import { HttpRequest } from '../../protocols/http'
 import { AddAccount, AddAccountModel } from '../../../domain/usercase/add-account'
 import { AccountModel } from '../../../domain/model/account'
+import { Authentication, AuthenticationModel } from '../../../domain/usercase/authentication'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -25,6 +26,15 @@ const makePasswordValidator = (): PasswordValidator => {
     }
   }
   return new PasswordValidatorStub()
+}
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth (authentication: AuthenticationModel): Promise<string> {
+      return 'any_token'
+    }
+  }
+  return new AuthenticationStub()
 }
 
 const makeFakeAccount = (): AccountModel => ({
@@ -57,18 +67,21 @@ interface SutTypes {
   emailValidatorStub: EmailValidator
   passwordValidatorStub: PasswordValidator
   addAccount: AddAccount
+  authenticationStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const passwordValidatorStub = makePasswordValidator()
   const addAccount = makeAddAccount()
-  const sut = new SignUpController(emailValidatorStub, addAccount, passwordValidatorStub)
+  const authenticationStub = makeAuthentication()
+  const sut = new SignUpController(emailValidatorStub, addAccount, passwordValidatorStub, authenticationStub)
   return {
     sut,
     emailValidatorStub,
     passwordValidatorStub,
-    addAccount
+    addAccount,
+    authenticationStub
   }
 }
 
@@ -210,6 +223,16 @@ describe('SignUpController', () => {
     jest.spyOn(addAccount, 'add').mockReturnValueOnce(new Promise(resolve => resolve(null)))
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(forbidden(new EmailInUseError()))
+  })
+
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+    expect(authSpy).toBeCalledWith({
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    })
   })
 
   test('Should returns 200 if valid data is provided', async () => {

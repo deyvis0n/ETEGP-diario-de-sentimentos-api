@@ -2,22 +2,11 @@ import { SignUpController } from './signup-controller'
 import { EmailInUseError } from '../../erros/email-in-use-error'
 import { badRequest, serverError, ok, forbidden } from '../../helper/http/http-helper'
 import { InvalidParamError } from '../../erros/invalid-param-error'
-import { EmailValidator } from '../../../validation/protocols/email-validator'
-import { PasswordValidator } from '../../../validation/protocols/password-validator'
 import { HttpRequest } from '../../protocols/http'
 import { AddAccount, AddAccountModel } from '../../../domain/usercase/add-account'
 import { AccountModel } from '../../../domain/model/account'
 import { Authentication, AuthenticationModel, Result } from '../../../domain/usercase/authentication'
 import { Validation } from '../../protocols/validation'
-
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid (email: string): boolean {
-      return true
-    }
-  }
-  return new EmailValidatorStub()
-}
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
@@ -26,15 +15,6 @@ const makeValidation = (): Validation => {
     }
   }
   return new ValidationStub()
-}
-
-const makePasswordValidator = (): PasswordValidator => {
-  class PasswordValidatorStub implements PasswordValidator {
-    isValid (password: string): boolean {
-      return true
-    }
-  }
-  return new PasswordValidatorStub()
 }
 
 const makeAuthentication = (): Authentication => {
@@ -73,30 +53,22 @@ const makeFakeRequest = (): HttpRequest => ({
 
 interface SutTypes {
   sut: SignUpController
-  emailValidatorStub: EmailValidator
-  passwordValidatorStub: PasswordValidator
   addAccount: AddAccount
   authenticationStub: Authentication
   validationStub: Validation
 }
 
 const makeSut = (): SutTypes => {
-  const emailValidatorStub = makeEmailValidator()
-  const passwordValidatorStub = makePasswordValidator()
   const addAccount = makeAddAccount()
   const authenticationStub = makeAuthentication()
   const validationStub = makeValidation()
   const sut = new SignUpController(
-    emailValidatorStub,
     addAccount,
-    passwordValidatorStub,
     authenticationStub,
     validationStub
   )
   return {
     sut,
-    emailValidatorStub,
-    passwordValidatorStub,
     addAccount,
     authenticationStub,
     validationStub

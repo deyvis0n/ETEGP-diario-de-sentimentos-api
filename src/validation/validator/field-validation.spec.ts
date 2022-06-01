@@ -39,4 +39,10 @@ describe('FieldValidation', () => {
     const error = sut.validate({ invalidfield: 'any_field' })
     expect(error).toEqual(new InvalidParamError('field'))
   })
+
+  test('Should return null if FieldValidator success', () => {
+    const { sut } = makeSut()
+    const error = sut.validate({ field: 'any_field' })
+    expect(error).toBeNull()
+  })
 })

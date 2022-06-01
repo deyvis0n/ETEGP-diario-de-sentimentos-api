@@ -19,12 +19,13 @@ export default {
   servers: [{
     url: '/api'
   }],
-  tags: [{
-    name: 'Login'
-  },
-  {
-    name: 'SignUp'
-  }],
+  tags: [
+    {
+      name: 'SignUp'
+    },
+    {
+      name: 'Login'
+    }],
   paths: {
     '/login': loginPath,
     '/signup': signupPath

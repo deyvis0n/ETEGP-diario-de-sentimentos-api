@@ -1,6 +1,8 @@
 import { loginPath } from './paths/login-path'
 import { accountSchema } from './schemas/account-schema'
 import { loguinParamsSchema } from './schemas/login-params-schema'
+import { signupPath } from './paths/signup-path'
+import { signupParamsSchema } from './schemas/signup-params-schema'
 
 export default {
   openapi: '3.0.0',
@@ -14,12 +16,17 @@ export default {
   }],
   tags: [{
     name: 'Login'
+  },
+  {
+    name: 'SignUp'
   }],
   paths: {
-    '/login': loginPath
+    '/login': loginPath,
+    '/signup': signupPath
   },
   schemas: {
     account: accountSchema,
-    loginParams: loguinParamsSchema
+    loginParams: loguinParamsSchema,
+    signupParams: signupParamsSchema
   }
 }

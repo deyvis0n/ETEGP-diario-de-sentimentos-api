@@ -3,6 +3,11 @@ import { accountSchema } from './schemas/account-schema'
 import { loguinParamsSchema } from './schemas/login-params-schema'
 import { signupPath } from './paths/signup-path'
 import { signupParamsSchema } from './schemas/signup-params-schema'
+import { errorSchema } from './schemas/error-schema'
+import { badRequest } from './components/bad-request'
+import { forbidden } from './components/forbidden'
+import { serverError } from './components/server-error'
+import { unauthorized } from './components/unauthorized'
 
 export default {
   openapi: '3.0.0',
@@ -27,6 +32,13 @@ export default {
   schemas: {
     account: accountSchema,
     loginParams: loguinParamsSchema,
-    signupParams: signupParamsSchema
+    signupParams: signupParamsSchema,
+    error: errorSchema
+  },
+  components: {
+    badRequest,
+    forbidden,
+    unauthorized,
+    serverError
   }
 }

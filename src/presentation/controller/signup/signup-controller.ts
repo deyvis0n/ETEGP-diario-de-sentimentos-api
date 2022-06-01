@@ -1,7 +1,6 @@
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Controller } from '../../protocols/signup'
 import { badRequest, serverError, ok, forbidden } from '../../helper/http/http-helper'
-import { InvalidParamError } from '../../erros/invalid-param-error'
 import { AddAccount } from '../../../domain/usercase/add-account'
 import { EmailInUseError } from '../../erros/email-in-use-error'
 import { Authentication } from '../../../domain/usercase/authentication'
@@ -20,10 +19,7 @@ export class SignUpController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { name, email, password, passwordConfirmation } = httpRequest.body
-      if (password !== passwordConfirmation) {
-        return badRequest(new InvalidParamError('passwordConfirmation'))
-      }
+      const { name, email, password } = httpRequest.body
       const account = await this.addAccount.add({
         name,
         email,

@@ -1,7 +1,6 @@
 import { SignUpController } from './signup-controller'
 import { EmailInUseError } from '../../erros/email-in-use-error'
 import { badRequest, serverError, ok, forbidden } from '../../helper/http/http-helper'
-import { InvalidParamError } from '../../erros/invalid-param-error'
 import { HttpRequest } from '../../protocols/http'
 import { AddAccount, AddAccountModel } from '../../../domain/usercase/add-account'
 import { AccountModel } from '../../../domain/model/account'
@@ -90,20 +89,6 @@ describe('SignUpController', () => {
     const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(Error()))
-  })
-
-  test('Should return 400 if password and passwordConfirmation is no equals', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'valid_name',
-        email: 'valid_email@mail.com',
-        password: 'valid_password',
-        passwordConfirmation: 'invalid_password'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(badRequest(new InvalidParamError('passwordConfirmation')))
   })
 
   test('Should AddAccount calls with correct values', async () => {

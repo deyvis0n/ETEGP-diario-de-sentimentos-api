@@ -1,5 +1,7 @@
 import { AddUserPostModel, AddUserPost } from '../../../domain/usercase/add-user-post'
 import { AddUserPostController } from './add-user-post-controller'
+import { Validation } from '../../protocols/validation'
+import { HttpRequest } from '../../protocols/http'
 
 const makeAddUserPost = (): AddUserPost => {
   class AddUserPostStub implements AddUserPost {
@@ -8,21 +10,48 @@ const makeAddUserPost = (): AddUserPost => {
   return new AddUserPostStub()
 }
 
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate (input: any): Error {
+      return null
+    }
+  }
+  return new ValidationStub()
+}
+
+const makeFakeRequest = (): HttpRequest => ({
+  body: {
+    id: 'any_id',
+    message: 'any_message'
+  }
+})
+
 interface SutTypes {
   sut: AddUserPostController
   addUserPostStub: AddUserPost
+  validationStub: Validation
 }
 
 const makeSut = (): SutTypes => {
   const addUserPostStub = makeAddUserPost()
-  const sut = new AddUserPostController(addUserPostStub)
+  const validationStub = makeValidation()
+  const sut = new AddUserPostController(addUserPostStub, validationStub)
   return {
     sut,
-    addUserPostStub
+    addUserPostStub,
+    validationStub
   }
 }
 
 describe('AddUserPostController', () => {
+  test('Should calls Validation with correct values', async () => {
+    const { sut, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validateSpy).toBeCalledWith(httpRequest.body)
+  })
+
   test('Should call AddUserPost with correct values', async () => {
     const { sut, addUserPostStub } = makeSut()
     const addSpy = jest.spyOn(addUserPostStub, 'add')

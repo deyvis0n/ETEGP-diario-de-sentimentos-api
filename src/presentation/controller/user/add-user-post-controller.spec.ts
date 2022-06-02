@@ -2,7 +2,7 @@ import { AddUserPostModel, AddUserPost } from '../../../domain/usercase/add-user
 import { AddUserPostController } from './add-user-post-controller'
 import { Validation } from '../../protocols/validation'
 import { HttpRequest } from '../../protocols/http'
-import { badRequest } from '../../helper/http/http-helper'
+import { badRequest, serverError } from '../../helper/http/http-helper'
 
 const makeAddUserPost = (): AddUserPost => {
   class AddUserPostStub implements AddUserPost {
@@ -72,5 +72,14 @@ describe('AddUserPostController', () => {
     })
     await sut.handle(httpRequest)
     expect(addSpy).toBeCalledWith(httpRequest.body)
+  })
+
+  test('Should return 500 if AddUserPost throws', async () => {
+    const { sut, addUserPostStub } = makeSut()
+    jest.spyOn(addUserPostStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError())
   })
 })

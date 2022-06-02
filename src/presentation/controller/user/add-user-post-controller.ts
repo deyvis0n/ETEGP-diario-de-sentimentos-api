@@ -16,7 +16,11 @@ export class AddUserPostController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      await this.addUserPost.add(httpRequest.body)
+      const { id, message } = httpRequest.body
+      await this.addUserPost.add({
+        id,
+        message
+      })
       return null
     } catch (error) {
       return serverError()

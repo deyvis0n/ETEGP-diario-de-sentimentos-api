@@ -2,6 +2,7 @@ import { AddUserPostModel, AddUserPost } from '../../../domain/usercase/add-user
 import { AddUserPostController } from './add-user-post-controller'
 import { Validation } from '../../protocols/validation'
 import { HttpRequest } from '../../protocols/http'
+import { badRequest } from '../../helper/http/http-helper'
 
 const makeAddUserPost = (): AddUserPost => {
   class AddUserPostStub implements AddUserPost {
@@ -50,6 +51,14 @@ describe('AddUserPostController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toBeCalledWith(httpRequest.body)
+  })
+
+  test('Should return 400 if Validation returns an Error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(Error()))
   })
 
   test('Should call AddUserPost with correct values', async () => {

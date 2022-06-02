@@ -1,5 +1,5 @@
 import { HttpRequest, HttpResponse } from '../../protocols/http'
-import { Controller } from '../../protocols/signup'
+import { Controller } from '../../protocols/controller'
 import { badRequest, serverError, ok, forbidden } from '../../helper/http/http-helper'
 import { AddAccount } from '../../../domain/usercase/add-account'
 import { EmailInUseError } from '../../erros/email-in-use-error'

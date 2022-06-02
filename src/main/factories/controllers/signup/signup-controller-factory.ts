@@ -1,4 +1,4 @@
-import { Controller } from '../../../../presentation/protocols/signup'
+import { Controller } from '../../../../presentation/protocols/controller'
 import { SignUpController } from '../../../../presentation/controller/signup/signup-controller'
 import { DbAddAccount } from '../../../../data/usecases/add-account/db-add-account'
 import { BcrypterAdapter } from '../../../../infra/criptography/bcrypt-adapter/bcrypt-adapter'

@@ -1,5 +1,5 @@
 export interface AddUserPostModel {
-  id: string
+  userId: string
   message: string
 }
 

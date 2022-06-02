@@ -22,7 +22,7 @@ const makeValidation = (): Validation => {
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-    id: 'any_id',
+    userId: 'any_id',
     message: 'any_message'
   }
 })
@@ -64,12 +64,7 @@ describe('AddUserPostController', () => {
   test('Should call AddUserPost with correct values', async () => {
     const { sut, addUserPostStub } = makeSut()
     const addSpy = jest.spyOn(addUserPostStub, 'add')
-    const httpRequest = ({
-      body: {
-        id: 'any_id',
-        message: 'any_message'
-      }
-    })
+    const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toBeCalledWith(httpRequest.body)
   })

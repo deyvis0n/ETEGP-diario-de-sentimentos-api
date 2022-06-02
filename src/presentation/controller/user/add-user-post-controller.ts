@@ -16,9 +16,9 @@ export class AddUserPostController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { id, message } = httpRequest.body
+      const { userId, message } = httpRequest.body
       await this.addUserPost.add({
-        id,
+        userId,
         message
       })
       return null

@@ -9,7 +9,7 @@ describe('EmailValidatorAdapter', () => {
 
   test('Should return true if a valid email is provided', () => {
     const sut = new EmailValidatorAdapter()
-    const isValid = sut.isValid('valid.valid@aluno.educacao.pe.gov.br.com')
+    const isValid = sut.isValid('valid.valid@aluno.educacao.pe.gov.br')
     expect(isValid).toBe(true)
   })
 })

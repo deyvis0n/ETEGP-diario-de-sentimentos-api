@@ -1,7 +1,7 @@
 import { Validation } from '../../protocols/validation'
 import { HttpRequest } from '../../protocols/http'
 import { AllUserPosterController } from './all-user-post-controller'
-import { badRequest, ok } from '../../helper/http/http-helper'
+import { badRequest, ok, serverError } from '../../helper/http/http-helper'
 import { AllUserPost } from '../../../domain/usercase/all-user-post'
 import { UserPostModel } from '../../../domain/model/user-post'
 
@@ -81,7 +81,16 @@ describe('AllUserPosterController', () => {
     expect(findSpy).toBeCalledWith('any_id')
   })
 
-  test('Should return an UserPost array on success', async () => {
+  test('Should return 500 if AllUserPost throws', async () => {
+    const { sut, allUserPostStub } = makeSut()
+    jest.spyOn(allUserPostStub, 'find').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError())
+  })
+
+  test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpRequest = makeFakeRequest()
     const fakeUserPost1 = makeFakeUserPost()

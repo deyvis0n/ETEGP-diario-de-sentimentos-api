@@ -6,13 +6,13 @@ import { AllUserPost } from '../../../domain/usercase/all-user-post'
 
 export class AllUserPosterController implements Controller {
   constructor (
-    private readonly valiudaton: Validation,
+    private readonly validation: Validation,
     private readonly allUserPost: AllUserPost
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = await this.valiudaton.validate(httpRequest.body)
+      const error = await this.validation.validate(httpRequest.body)
       if (error) {
         return badRequest(error)
       }

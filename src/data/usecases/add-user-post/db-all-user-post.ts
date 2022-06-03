@@ -6,7 +6,7 @@ export class DbAllUserPost implements AllUserPost {
   constructor (private readonly findAllUserPostByUseIdRepository: FindAllUserPostByUseIdRepository) {}
 
   async find (userId: string): Promise<UserPostModel[]> {
-    await this.findAllUserPostByUseIdRepository.findByUserId(userId)
-    return null
+    const userPostArray = await this.findAllUserPostByUseIdRepository.findByUserId(userId)
+    return userPostArray
   }
 }

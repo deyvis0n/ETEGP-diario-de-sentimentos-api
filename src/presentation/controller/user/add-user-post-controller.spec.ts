@@ -2,7 +2,7 @@ import { AddUserPostModel, AddUserPost } from '../../../domain/usercase/add-user
 import { AddUserPostController } from './add-user-post-controller'
 import { Validation } from '../../protocols/validation'
 import { HttpRequest } from '../../protocols/http'
-import { badRequest, serverError } from '../../helper/http/http-helper'
+import { badRequest, serverError, noContent } from '../../helper/http/http-helper'
 
 const makeAddUserPost = (): AddUserPost => {
   class AddUserPostStub implements AddUserPost {
@@ -76,5 +76,11 @@ describe('AddUserPostController', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError())
+  })
+
+  test('Should returns 200 if AddUserPostController success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(noContent())
   })
 })

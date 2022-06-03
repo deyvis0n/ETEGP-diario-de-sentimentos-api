@@ -6,7 +6,11 @@ export class UserPostMongoRepository implements AddUserPostRepository {
   async add (userPost: AddUserPostModel): Promise<void> {
     const userPostCollection = MongoHelper.getCollection('user-posts')
     const userId = MongoHelper.objectId(userPost.userId)
-    const date = Date()
-    await userPostCollection.insertOne(Object.assign(userPost, { userId, date }))
+    const { message } = userPost
+    await userPostCollection.insertOne({
+      userId: userId,
+      message: message,
+      date: new Date()
+    })
   }
 }

@@ -2,7 +2,7 @@ import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { AddUserPost } from '../../../domain/usercase/add-user-post'
 import { Validation } from '../../protocols/validation'
-import { badRequest, serverError } from '../../helper/http/http-helper'
+import { badRequest, noContent, serverError } from '../../helper/http/http-helper'
 
 export class AddUserPostController implements Controller {
   constructor (
@@ -21,7 +21,7 @@ export class AddUserPostController implements Controller {
         userId,
         message
       })
-      return null
+      return noContent()
     } catch (error) {
       return serverError()
     }

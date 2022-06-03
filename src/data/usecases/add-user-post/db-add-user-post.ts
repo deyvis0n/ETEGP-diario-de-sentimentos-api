@@ -6,6 +6,5 @@ export class DbAddAccountUserPost implements AddUserPost {
 
   async add (userPost: AddUserPostModel): Promise<void> {
     await this.addUserPostRepository.add(userPost)
-    return null
   }
 }

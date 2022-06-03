@@ -1,4 +1,4 @@
-import { badRequest, ok } from '../../helper/http/http-helper'
+import { badRequest, ok, serverError } from '../../helper/http/http-helper'
 import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Validation } from '../../protocols/validation'
@@ -11,12 +11,16 @@ export class AllUserPosterController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const error = await this.valiudaton.validate(httpRequest.body)
-    if (error) {
-      return badRequest(error)
+    try {
+      const error = await this.valiudaton.validate(httpRequest.body)
+      if (error) {
+        return badRequest(error)
+      }
+      const { id } = httpRequest.body
+      const userPostArray = await this.allUserPost.find(id)
+      return ok(userPostArray)
+    } catch (error) {
+      return serverError()
     }
-    const { id } = httpRequest.body
-    const userPostArray = await this.allUserPost.find(id)
-    return ok(userPostArray)
   }
 }

@@ -20,6 +20,11 @@ export const MongoHelper = {
     return { ...rest, id: _id.toHexString() }
   },
 
+  postMap: (data: any): any => {
+    const { _id, userId, ...rest } = data
+    return { ...rest, id: _id.toHexString(), userId: userId.toHexString() }
+  },
+
   objectId: (id: string): ObjectId => {
     return new ObjectId(id)
   }

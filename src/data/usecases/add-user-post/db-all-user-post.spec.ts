@@ -42,4 +42,15 @@ describe('DbAllUserPost', () => {
     await sut.find('any_id')
     expect(findByUserIdSpy).toBeCalledWith('any_id')
   })
+
+  test('Should return an UserPost array on success', async () => {
+    const { sut } = makeSut()
+    const userPostArray = await sut.find('any_id')
+    const fakeUserPost1 = makeFakeUserPost()
+    const fakeUserPost2 = makeFakeUserPost()
+    expect(userPostArray).toEqual([
+      fakeUserPost1,
+      fakeUserPost2
+    ])
+  })
 })

@@ -1,6 +1,7 @@
 import { Validation } from '../../protocols/validation'
 import { HttpRequest } from '../../protocols/http'
 import { AllUserPosterController } from './all-user-post-controller'
+import { badRequest } from '../../helper/http/http-helper'
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
@@ -38,5 +39,13 @@ describe('AllUserPosterController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validateSpy).toBeCalledWith(httpRequest.body)
+  })
+
+  test('Should return 400 if Validation returns an Error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const httpRequest = makeFakeRequest()
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(Error()))
   })
 })

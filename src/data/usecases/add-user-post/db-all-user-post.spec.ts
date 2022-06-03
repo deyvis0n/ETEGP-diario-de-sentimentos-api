@@ -43,6 +43,13 @@ describe('DbAllUserPost', () => {
     expect(findByUserIdSpy).toBeCalledWith('any_id')
   })
 
+  test('Should return thorws if FindAllUserPostByUseIdRepository throws', async () => {
+    const { sut, findAllUserPostByUseIdRepositoryStub } = makeSut()
+    jest.spyOn(findAllUserPostByUseIdRepositoryStub, 'findByUserId').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const promise = sut.find('any_id')
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should return an UserPost array on success', async () => {
     const { sut } = makeSut()
     const userPostArray = await sut.find('any_id')

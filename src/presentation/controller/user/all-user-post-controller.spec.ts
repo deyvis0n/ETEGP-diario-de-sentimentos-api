@@ -28,7 +28,7 @@ const makeAllUserPost = (): AllUserPost => {
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-    id: 'any_id'
+    userId: 'any_id'
   }
 })
 

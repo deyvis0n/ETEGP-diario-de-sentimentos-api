@@ -16,8 +16,8 @@ export class AllUserPosterController implements Controller {
       if (error) {
         return badRequest(error)
       }
-      const { id } = httpRequest.body
-      const userPostArray = await this.allUserPost.find(id)
+      const { userId } = httpRequest.body
+      const userPostArray = await this.allUserPost.find(userId)
       return ok(userPostArray)
     } catch (error) {
       return serverError()

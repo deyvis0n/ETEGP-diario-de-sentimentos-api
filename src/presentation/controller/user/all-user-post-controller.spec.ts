@@ -1,7 +1,7 @@
 import { Validation } from '../../protocols/validation'
 import { HttpRequest } from '../../protocols/http'
 import { AllUserPosterController } from './all-user-post-controller'
-import { badRequest } from '../../helper/http/http-helper'
+import { badRequest, ok } from '../../helper/http/http-helper'
 import { AllUserPost } from '../../../domain/usercase/all-user-post'
 import { UserPostModel } from '../../../domain/model/user-post'
 
@@ -79,5 +79,17 @@ describe('AllUserPosterController', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(findSpy).toBeCalledWith('any_id')
+  })
+
+  test('Should return an UserPost array on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = makeFakeRequest()
+    const fakeUserPost1 = makeFakeUserPost()
+    const fakeUserPost2 = makeFakeUserPost()
+    const userPostArray = await sut.handle(httpRequest)
+    expect(userPostArray).toEqual(ok([
+      fakeUserPost1,
+      fakeUserPost2
+    ]))
   })
 })

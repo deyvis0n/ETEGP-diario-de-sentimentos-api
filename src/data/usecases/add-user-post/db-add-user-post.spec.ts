@@ -34,4 +34,15 @@ describe('DbAddUserPost', () => {
     await sut.add(userPost)
     expect(addSpy).toBeCalledWith(userPost)
   })
+
+  test('Should return throws if Hasher throws', async () => {
+    const { sut, AddUserPostRepositoryStub } = makeSut()
+    jest.spyOn(AddUserPostRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const userPost = ({
+      userId: 'any_id',
+      message: 'any_message'
+    })
+    const promise = sut.add(userPost)
+    await expect(promise).rejects.toThrow()
+  })
 })

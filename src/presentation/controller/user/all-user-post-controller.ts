@@ -1,4 +1,4 @@
-import { badRequest } from '../../helper/http/http-helper'
+import { badRequest, ok } from '../../helper/http/http-helper'
 import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { Validation } from '../../protocols/validation'
@@ -16,7 +16,7 @@ export class AllUserPosterController implements Controller {
       return badRequest(error)
     }
     const { id } = httpRequest.body
-    await this.allUserPost.find(id)
-    return null
+    const userPostArray = await this.allUserPost.find(id)
+    return ok(userPostArray)
   }
 }

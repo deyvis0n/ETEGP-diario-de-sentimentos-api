@@ -1,7 +1,7 @@
 import { UserPostModel } from '../../../domain/model/user-post'
 import { AllPosts } from '../../../domain/usercase/all-posts'
 import { AllPostsController } from './all-posts-controller'
-import { ok } from '../../helper/http/http-helper'
+import { ok, serverError } from '../../helper/http/http-helper'
 
 const makeAllPosts = (): AllPosts => {
   class AllPostsStub implements AllPosts {
@@ -44,6 +44,13 @@ describe('AllPostsController', () => {
     const findAllSpy = jest.spyOn(allPostsStub, 'findAll')
     await sut.handle({})
     expect(findAllSpy).toBeCalled()
+  })
+
+  test('Should return 500 if AllPosts throws', async () => {
+    const { sut, allPostsStub } = makeSut()
+    jest.spyOn(allPostsStub, 'findAll').mockImplementationOnce(() => { throw new Error() })
+    const httpReponse = await sut.handle({})
+    expect(httpReponse).toEqual(serverError())
   })
 
   test('Should return 200 and an post array on success', async () => {

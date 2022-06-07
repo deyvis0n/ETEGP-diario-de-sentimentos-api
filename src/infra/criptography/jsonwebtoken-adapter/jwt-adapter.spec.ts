@@ -13,14 +13,14 @@ const makeSut = (): JsonWebTokenAdapter => {
 }
 
 describe('JsonWebTokenAdapter', () => {
-  test('Should call JWT with correct values', async () => {
+  test('Should call encrypt with correct values', async () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
     await sut.encrypt('any_id')
     expect(signSpy).toBeCalledWith({ id: 'any_id' }, 'secret')
   })
 
-  test('Should return throws if JWT throws', async () => {
+  test('Should return throws if encrypt throws', async () => {
     const sut = makeSut()
     jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
       throw new Error()

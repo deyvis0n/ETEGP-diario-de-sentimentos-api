@@ -9,7 +9,9 @@ export class AuthMiddleware implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const { accessToken } = httpRequest.body
-    await this.loadAccountByToken.load(accessToken)
+    if (accessToken) {
+      await this.loadAccountByToken.load(accessToken)
+    }
     return forbidden(new AccessDeniedError())
   }
 }

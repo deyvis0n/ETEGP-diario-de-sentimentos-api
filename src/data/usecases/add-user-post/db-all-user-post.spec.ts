@@ -84,6 +84,13 @@ describe('DbAllUserPost', () => {
     ])
   })
 
+  test('Should return an empty array if user no have any post', async () => {
+    const { sut, findAllUserPostByUseIdRepositoryStub } = makeSut()
+    jest.spyOn(findAllUserPostByUseIdRepositoryStub, 'findByUserId').mockReturnValueOnce(new Promise(resolve => resolve([])))
+    const userPostArray = await sut.find('any_id')
+    expect(userPostArray).toEqual([])
+  })
+
   test('Should call LoadAccountByIdRepository with correct value', async () => {
     const { sut, loadAccountByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadAccountByIdRepositoryStub, 'loadById')

@@ -5,7 +5,10 @@ export class DbLoadAccountByToken implements LoadAccountByToken {
   constructor (private readonly decrypter: Decrypter) {}
 
   async load (accessToken: string): Promise<LoadAccountByTokenResult> {
-    await this.decrypter.decrypt(accessToken)
-    return null
+    try {
+      await this.decrypter.decrypt(accessToken)
+    } catch (error) {
+      return null
+    }
   }
 }

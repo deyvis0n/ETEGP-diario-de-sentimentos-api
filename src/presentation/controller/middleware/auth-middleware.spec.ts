@@ -50,4 +50,13 @@ describe('AuthMiddleware', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
+
+  test('Should return 403 if no token is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {}
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+  })
 })

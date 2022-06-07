@@ -6,3 +6,7 @@ export interface HttpResponse {
   statusCode: number
   body: any
 }
+
+export interface HttpRequestMiddleware {
+  accessToken?: string
+}

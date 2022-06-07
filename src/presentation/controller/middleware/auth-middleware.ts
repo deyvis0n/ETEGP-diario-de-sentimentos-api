@@ -1,10 +1,10 @@
-import { Controller } from '../../protocols/controller'
+import { Middleware } from '../../protocols/middleware'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { LoadAccountByToken } from '../../../domain/usercase/load-account-by-token'
 import { forbidden, ok, serverError } from '../../helper/http/http-helper'
 import { AccessDeniedError } from '../../erros/access-denied-error'
 
-export class AuthMiddleware implements Controller {
+export class AuthMiddleware implements Middleware {
   constructor (private readonly loadAccountByToken: LoadAccountByToken) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {

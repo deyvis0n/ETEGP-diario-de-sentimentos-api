@@ -45,4 +45,13 @@ describe('JsonWebTokenAdapter', () => {
     await sut.decrypt('any_token')
     expect(verifySpy).toBeCalledWith('any_token', 'secret')
   })
+
+  test('Should return throws if decrypt throws', async () => {
+    const sut = makeSut()
+    jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const token = sut.decrypt('any_id')
+    await expect(token).rejects.toThrow()
+  })
 })

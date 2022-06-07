@@ -11,7 +11,9 @@ export class DbAllPosts implements AllPosts {
 
   async findAll (): Promise<UserPostModel[]> {
     const arrayPost = await this.findAllPosts.findAll()
-    await this.loadAccountByIdRepository.loadById(arrayPost[0].id)
-    return null
+    if (arrayPost.length !== 0) {
+      await this.loadAccountByIdRepository.loadById(arrayPost[0].id)
+    }
+    return []
   }
 }

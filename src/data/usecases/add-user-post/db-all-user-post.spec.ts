@@ -35,7 +35,7 @@ const makeFakeUserPost = (): UserPostModel => ({
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
-  name: 'any_name',
+  name: 'user_name',
   email: 'any_email@mail.com',
   password: 'hashed_password'
 })
@@ -75,8 +75,9 @@ describe('DbAllUserPost', () => {
   test('Should return an UserPost array on success', async () => {
     const { sut } = makeSut()
     const userPostArray = await sut.find('any_id')
-    const fakeUserPost1 = makeFakeUserPost()
-    const fakeUserPost2 = makeFakeUserPost()
+    const { name } = makeFakeAccount()
+    const fakeUserPost1 = Object.assign(makeFakeUserPost(), { userName: name })
+    const fakeUserPost2 = Object.assign(makeFakeUserPost(), { userName: name })
     expect(userPostArray).toEqual([
       fakeUserPost1,
       fakeUserPost2

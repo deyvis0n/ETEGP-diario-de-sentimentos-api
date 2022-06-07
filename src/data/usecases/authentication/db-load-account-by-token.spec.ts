@@ -66,4 +66,11 @@ describe('DbLoadAccountByToken', () => {
     await sut.load('any_token')
     expect(decryptSpy).toBeCalledWith('any_id')
   })
+
+  test('Should return an account if LoadAccountByIdRepository returns an account', async () => {
+    const { sut } = makeSut()
+    const accountToCompare = makeFakeAccount()
+    const account = await sut.load('any_token')
+    expect(account).toEqual(accountToCompare)
+  })
 })

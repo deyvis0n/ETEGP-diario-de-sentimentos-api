@@ -66,6 +66,13 @@ describe('DbAllPosts', () => {
     expect(findAllSpy).toBeCalled()
   })
 
+  test('Should return an empty array if no find any post', async () => {
+    const { sut, findAllPostsStub } = makeSut()
+    jest.spyOn(findAllPostsStub, 'findAll').mockReturnValueOnce(new Promise(resolve => resolve([])))
+    const arrayPost = await sut.findAll()
+    expect(arrayPost).toEqual([])
+  })
+
   test('Should calls LoadAccountByIdRepository with correct values', async () => {
     const { sut, loadAccountByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadAccountByIdRepositoryStub, 'loadById')

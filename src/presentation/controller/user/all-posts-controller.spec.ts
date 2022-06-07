@@ -1,6 +1,7 @@
 import { UserPostModel } from '../../../domain/model/user-post'
 import { AllPosts } from '../../../domain/usercase/all-posts'
 import { AllPostsController } from './all-posts-controller'
+import { ok } from '../../helper/http/http-helper'
 
 const makeAllPosts = (): AllPosts => {
   class AllPostsStub implements AllPosts {
@@ -43,5 +44,18 @@ describe('AllPostsController', () => {
     const findAllSpy = jest.spyOn(allPostsStub, 'findAll')
     await sut.handle({})
     expect(findAllSpy).toBeCalled()
+  })
+
+  test('Should return 200 and an post array on success', async () => {
+    const { sut } = makeSut()
+    const post1 = makeFakeUserPost()
+    const post2 = makeFakeUserPost()
+    const post3 = makeFakeUserPost()
+    const postArray = await sut.handle({})
+    expect(postArray).toEqual(ok([
+      post1,
+      post2,
+      post3
+    ]))
   })
 })

@@ -2,6 +2,7 @@ import { LoadAccountByToken, LoadAccountByTokenResult } from '../../../domain/us
 import { AuthMiddleware } from './auth-middleware'
 import { forbidden, ok, serverError } from '../../helper/http/http-helper'
 import { AccessDeniedError } from '../../erros/access-denied-error'
+import { HttpRequest } from '../../protocols/http'
 
 const makeLoadAccountByToken = (): LoadAccountByToken => {
   class LoadAccountByTokenStub implements LoadAccountByToken {
@@ -11,6 +12,12 @@ const makeLoadAccountByToken = (): LoadAccountByToken => {
   }
   return new LoadAccountByTokenStub()
 }
+
+const makeFakeRequest = (): HttpRequest => ({
+  body: {
+    accessToken: 'any_token'
+  }
+})
 
 interface SutTypes {
   sut: AuthMiddleware
@@ -30,11 +37,7 @@ describe('AuthMiddleware', () => {
   test('Should calls LoadAccountByToken with correct values', async () => {
     const { sut, loadAccountByTokenStub } = makeSut()
     const loadSpyt = jest.spyOn(loadAccountByTokenStub, 'load')
-    const httpRequest = {
-      body: {
-        accessToken: 'any_token'
-      }
-    }
+    const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(loadSpyt).toHaveBeenCalledWith('any_token')
   })
@@ -62,11 +65,7 @@ describe('AuthMiddleware', () => {
 
   test('Should return 200 and id if success', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        accessToken: 'any_token'
-      }
-    }
+    const httpRequest = makeFakeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(ok({ userId: 'any_id' }))
   })
@@ -74,11 +73,7 @@ describe('AuthMiddleware', () => {
   test('Should return 500 if LoadAccountByToken throws', async () => {
     const { sut, loadAccountByTokenStub } = makeSut()
     jest.spyOn(loadAccountByTokenStub, 'load').mockImplementationOnce(() => { throw new Error() })
-    const httpRequest = {
-      body: {
-        accessToken: 'any_token'
-      }
-    }
+    const httpRequest = makeFakeRequest()
     const httpReponse = await sut.handle(httpRequest)
     expect(httpReponse).toEqual(serverError())
   })

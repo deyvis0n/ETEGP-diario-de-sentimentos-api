@@ -11,7 +11,7 @@ export class DbAllUserPost implements AllUserPost {
 
   async find (userId: string): Promise<UserPostModel[]> {
     const userPostArray = await this.findAllUserPostByUseIdRepository.findByUserId(userId)
-    if (userPostArray !== []) {
+    if (userPostArray.length !== 0) {
       const userPostArrayWithName = []
       const { name } = await this.loadAccountByIdRepositoryStub.loadById(userPostArray[0].userId)
       for (const post of userPostArray) {
@@ -19,6 +19,6 @@ export class DbAllUserPost implements AllUserPost {
       }
       return userPostArrayWithName
     }
-    return []
+    return userPostArray
   }
 }

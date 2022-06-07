@@ -1,12 +1,12 @@
 import { LoadAccountByToken, LoadAccountByTokenResult } from '../../../domain/usercase/load-account-by-token'
 import { AuthMiddleware } from './auth-middleware'
-import { forbidden } from '../../helper/http/http-helper'
+import { forbidden, ok } from '../../helper/http/http-helper'
 import { AccessDeniedError } from '../../erros/access-denied-error'
 
 const makeLoadAccountByToken = (): LoadAccountByToken => {
   class LoadAccountByTokenStub implements LoadAccountByToken {
     async load (accessToken: string): Promise<LoadAccountByTokenResult> {
-      return { id: 'any_token' }
+      return { id: 'any_id' }
     }
   }
   return new LoadAccountByTokenStub()
@@ -58,5 +58,16 @@ describe('AuthMiddleware', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+  })
+
+  test('Should return 200 and id if success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        accessToken: 'any_token'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(ok({ userId: 'any_id' }))
   })
 })

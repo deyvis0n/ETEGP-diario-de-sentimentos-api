@@ -51,6 +51,18 @@ describe('AccountMongoRepository', () => {
     expect(account.password).toBe('any_password')
   })
 
+  test('Should calls findOne with correct values', async () => {
+    const sut = makeSut()
+    const insertResult = await accountCollection.insertOne(makeFakeAccountData())
+    const id = insertResult.insertedId.toHexString()
+    const account = await sut.loadById(id)
+    expect(account).toBeTruthy()
+    expect(account.id).toBeTruthy()
+    expect(account.name).toBe('any_name')
+    expect(account.email).toBe('any_email@mail.com')
+    expect(account.password).toBe('any_password')
+  })
+
   test('Should return null if findOne return null', async () => {
     const sut = makeSut()
     const account = await sut.loadByEmail('any_email@mail.com')

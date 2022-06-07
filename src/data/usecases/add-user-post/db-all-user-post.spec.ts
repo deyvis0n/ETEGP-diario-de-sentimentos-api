@@ -17,6 +17,7 @@ const makeFindAllUserPostByUseIdRepository = (): FindAllUserPostByUseIdRepositor
 const makeFakeUserPost = (): UserPostModel => ({
   id: 'any_id',
   userId: 'any_user_id',
+  userName: 'any_name',
   message: 'any_message',
   date: new Date(2022, 1, 1)
 })

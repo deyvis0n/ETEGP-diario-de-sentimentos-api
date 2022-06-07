@@ -22,7 +22,7 @@ export class UserPostMongoRepository implements AddUserPostRepository, FindAllUs
     const postArray = await userPostCollection.find({ userId: userIdObject }).toArray()
     const userPostArray = []
     for (const post of postArray) {
-      userPostArray.push(MongoHelper.postMap(post))
+      userPostArray.push(Object.assign(MongoHelper.postMap(post), { userName: null }))
     }
     return userPostArray
   }

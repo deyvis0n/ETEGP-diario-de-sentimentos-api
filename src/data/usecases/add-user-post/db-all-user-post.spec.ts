@@ -1,5 +1,7 @@
+import { AccountModel } from '../../../domain/model/account'
 import { UserPostModel } from '../../../domain/model/user-post'
 import { FindAllUserPostByUseIdRepository } from '../../protocols/db/find-all-user-post-by-user-id'
+import { LoadAccountByIdRepository } from '../../protocols/db/load-account-by-id-repository'
 import { DbAllUserPost } from './db-all-user-post'
 
 const makeFindAllUserPostByUseIdRepository = (): FindAllUserPostByUseIdRepository => {
@@ -14,6 +16,15 @@ const makeFindAllUserPostByUseIdRepository = (): FindAllUserPostByUseIdRepositor
   return new FindAllUserPostByUseIdRepositoryStub()
 }
 
+const makeLoadAccountByIdRepository = (): LoadAccountByIdRepository => {
+  class LoadAccountByIdRepositoryStub implements LoadAccountByIdRepository {
+    async loadById (id: string): Promise<AccountModel> {
+      return makeFakeAccount()
+    }
+  }
+  return new LoadAccountByIdRepositoryStub()
+}
+
 const makeFakeUserPost = (): UserPostModel => ({
   id: 'any_id',
   userId: 'any_user_id',
@@ -22,17 +33,27 @@ const makeFakeUserPost = (): UserPostModel => ({
   date: new Date(2022, 1, 1)
 })
 
+const makeFakeAccount = (): AccountModel => ({
+  id: 'any_id',
+  name: 'any_name',
+  email: 'any_email@mail.com',
+  password: 'hashed_password'
+})
+
 interface SutTypes {
   sut: DbAllUserPost
   findAllUserPostByUseIdRepositoryStub: FindAllUserPostByUseIdRepository
+  loadAccountByIdRepositoryStub: LoadAccountByIdRepository
 }
 
 const makeSut = (): SutTypes => {
   const findAllUserPostByUseIdRepositoryStub = makeFindAllUserPostByUseIdRepository()
-  const sut = new DbAllUserPost(findAllUserPostByUseIdRepositoryStub)
+  const loadAccountByIdRepositoryStub = makeLoadAccountByIdRepository()
+  const sut = new DbAllUserPost(findAllUserPostByUseIdRepositoryStub, loadAccountByIdRepositoryStub)
   return {
     sut,
-    findAllUserPostByUseIdRepositoryStub
+    findAllUserPostByUseIdRepositoryStub,
+    loadAccountByIdRepositoryStub
   }
 }
 
@@ -60,5 +81,12 @@ describe('DbAllUserPost', () => {
       fakeUserPost1,
       fakeUserPost2
     ])
+  })
+
+  test('Should call LoadAccountByIdRepository with correct value', async () => {
+    const { sut, loadAccountByIdRepositoryStub } = makeSut()
+    const loadByIdSpy = jest.spyOn(loadAccountByIdRepositoryStub, 'loadById')
+    await sut.find('any_id')
+    expect(loadByIdSpy).toBeCalledWith('any_user_id')
   })
 })

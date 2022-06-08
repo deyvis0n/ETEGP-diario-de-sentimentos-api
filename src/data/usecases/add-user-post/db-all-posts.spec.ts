@@ -79,4 +79,18 @@ describe('DbAllPosts', () => {
     await sut.findAll()
     expect(loadByIdSpy).toBeCalledWith('any_id')
   })
+
+  test('Should return a correct user name os success', async () => {
+    const { sut } = makeSut()
+    const { name } = makeFakeAccount()
+    const fakeUserPost1 = Object.assign(makeFakeUserPost(), { userName: name })
+    const fakeUserPost2 = Object.assign(makeFakeUserPost(), { userName: name })
+    const fakeUserPost3 = Object.assign(makeFakeUserPost(), { userName: name })
+    const arrayPost = await sut.findAll()
+    expect(arrayPost).toEqual([
+      fakeUserPost1,
+      fakeUserPost2,
+      fakeUserPost3
+    ])
+  })
 })

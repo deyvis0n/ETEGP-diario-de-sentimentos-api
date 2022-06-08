@@ -100,4 +100,11 @@ describe('DbAllPosts', () => {
       fakeUserPost3
     ])
   })
+
+  test('Should return thorws if LoadAccountByIdRepository throws', async () => {
+    const { sut, loadAccountByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByIdRepositoryStub, 'loadById').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const promise = sut.findAll()
+    await expect(promise).rejects.toThrow()
+  })
 })

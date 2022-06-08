@@ -73,6 +73,13 @@ describe('DbAllPosts', () => {
     expect(arrayPost).toEqual([])
   })
 
+  test('Should return thorws if FindAllPosts throws', async () => {
+    const { sut, findAllPostsStub } = makeSut()
+    jest.spyOn(findAllPostsStub, 'findAll').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const promise = sut.findAll()
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should calls LoadAccountByIdRepository with correct values', async () => {
     const { sut, loadAccountByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadAccountByIdRepositoryStub, 'loadById')

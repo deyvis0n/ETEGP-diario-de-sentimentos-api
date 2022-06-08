@@ -14,7 +14,7 @@ export class DbAllPosts implements AllPosts {
     if (arrayPost.length !== 0) {
       const arrayPostWithName = []
       for (const post of arrayPost) {
-        const account = await this.loadAccountByIdRepository.loadById(post.id)
+        const account = await this.loadAccountByIdRepository.loadById(post.userId)
         arrayPostWithName.push(Object.assign(post, { userName: account.name }))
       }
       return arrayPostWithName

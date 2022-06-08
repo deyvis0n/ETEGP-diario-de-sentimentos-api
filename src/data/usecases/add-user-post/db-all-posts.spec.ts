@@ -84,7 +84,7 @@ describe('DbAllPosts', () => {
     const { sut, loadAccountByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadAccountByIdRepositoryStub, 'loadById')
     await sut.findAll()
-    expect(loadByIdSpy).toBeCalledWith('any_id')
+    expect(loadByIdSpy).toBeCalledWith('any_user_id')
   })
 
   test('Should return a correct user name os success', async () => {

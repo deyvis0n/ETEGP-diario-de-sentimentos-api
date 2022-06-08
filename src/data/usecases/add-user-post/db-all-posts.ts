@@ -12,7 +12,12 @@ export class DbAllPosts implements AllPosts {
   async findAll (): Promise<UserPostModel[]> {
     const arrayPost = await this.findAllPosts.findAll()
     if (arrayPost.length !== 0) {
-      await this.loadAccountByIdRepository.loadById(arrayPost[0].id)
+      const arrayPostWithName = []
+      for (const post of arrayPost) {
+        const account = await this.loadAccountByIdRepository.loadById(post.id)
+        arrayPostWithName.push(Object.assign(post, { userName: account.name }))
+      }
+      return arrayPostWithName
     }
     return []
   }
